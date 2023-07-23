@@ -1,3 +1,5 @@
+import os, sys
+from subprocess import Popen
 from tkinter import *
 from tkinter import messagebox
 
@@ -60,12 +62,21 @@ def takeInput(row, column):
         global LAST_CHANCE
         board[row][column] = LAST_CHANCE
         btns[row][column].configure(text=LAST_CHANCE, fg="black", state=DISABLED)
+
         if won_by := is_win(board=board):
-            messagebox.showinfo("showinfo", f"{won_by} WON")
-            root.destroy()
+            re_play = messagebox.askretrycancel("Game Over", f"{won_by} WON.\n\nDo you want to retry?")
+            if re_play:
+                Popen([sys.executable, f"{os.getcwd()}/game.py"], shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
+                root.destroy()
+            else:
+                root.destroy()
         elif not is_any_block_empty(board=board):
-            messagebox.showerror("showerror", f"DRAW")
-            root.destroy()
+            re_play = messagebox.askretrycancel("Game Over", f"DRAW.\n\nDo you want to retry?")
+            if re_play:
+                Popen([sys.executable, f"{os.getcwd()}/game.py"], shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
+                root.destroy()
+            else:
+                root.destroy()
         else:
             LAST_CHANCE = get_next_player(LAST_CHANCE)
             player['text'] = f"{LAST_CHANCE}'s chance"
